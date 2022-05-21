@@ -182,6 +182,7 @@ function processTable(table: any) {
 
         return out
     })
+        .filter(row => row)
     return table
 }
 
