@@ -253,6 +253,9 @@ export class Base {
     tables: SeatableTable[] = []
 
     constructor(data: any) {
+        if (!data.tables) {
+            throw new Error(data)
+        }
         data.tables.forEach((table: any) => {
             table = processTable(table)
             this.tableById[table._id] = table
