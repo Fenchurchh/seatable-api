@@ -128,8 +128,8 @@ export interface SeatableTable {
 }
 
 
-const toDictionary = (data, keyName = "key") => Object.assign({}, ...data.map((x) => ({ [x[keyName]]: x })));
-const parseColumn = (col, value, { optionById, optionNameById }) => {
+const toDictionary = (data: any, keyName = "key") => Object.assign({}, ...data.map((x: IHash<any>) => ({ [x[keyName]]: x })));
+const parseColumn = (col: any, value: any, { optionNameById }: { optionNameById: IHash<any> }) => {
     if (!col) return null
     const { name, type, ...rest } = col
 
@@ -139,7 +139,7 @@ const parseColumn = (col, value, { optionById, optionNameById }) => {
             out = optionNameById[`${col.name}.${value}`]
             break;
         case "multiple-select":
-            out = value.map((tag) => optionNameById[`${col.name}.${tag}`])
+            out = value.map((tag: any) => optionNameById[`${col.name}.${tag}`])
             break;
         default:
             out = value;
@@ -149,15 +149,15 @@ const parseColumn = (col, value, { optionById, optionNameById }) => {
 }
 
 
-function processTable(table) {
-    const optionById = {}
-    const optionNameById = {}
+function processTable(table: any) {
+    const optionById: IHash<any> = {}
+    const optionNameById: IHash<any> = {}
     const columnById = toDictionary(table.columns)
     // CREATE COLUMN OPTION META DATA
-    table.columns.forEach(column => {
+    table.columns.forEach((column: any) => {
         let col = columnById[column.key]
         if (column.data && column.data.options && column.data.options.length > 0) {
-            column.data.options.forEach((option) => {
+            column.data.options.forEach((option: any) => {
                 optionById[`${col.name}.${option.id}`] = option
                 optionNameById[`${col.name}.${option.id}`] = option.name
             })
@@ -165,19 +165,19 @@ function processTable(table) {
     })
     table.optionById = optionById
     table.optionNameById = optionNameById
-    table.data = table.rows.map(row => {
+    table.data = table.rows.map((row: any) => {
         // 0000 is always the default key. It is not in the table, it's not data :)
         if (!row["0000"]) {
             return
         }
-        let out = {
+        let out: IHash<any> = {
             id: row._id
         }
         Object.entries(row)
             .forEach(([key, value]) => {
                 let col = columnById[key]
                 if (!col) return null
-                out[col.name] = parseColumn(col, value, { optionById, optionNameById })
+                out[col.name] = parseColumn(col, value, { optionNameById })
             })
 
         return out
@@ -187,8 +187,8 @@ function processTable(table) {
 
 export class Seatable {
     token: string
-    base: Base
-    auth: IAuth
+    base?: Base
+    auth?: IAuth
 
     constructor(config: ISeatable) {
         this.token = config.token
@@ -209,7 +209,7 @@ export class Seatable {
         return data
     }
 
-    async  getTable(tableName, baseId = "") {
+    async  getTable(tableName: any, baseId = "") {
         if (!this.base) {
             this.base = await this.getBase(baseId)
         }
@@ -220,6 +220,7 @@ export class Seatable {
 
     async  getBase(id: string, lang = "en"): Promise<Base> {
         this.auth = this.auth || await this.getAuth()
+        if (!this.auth) throw Error("No valid Auth - aborting Base/Table fetch")
         const { access_token } = this.auth
 
         const data = await fetch(`https://cloud.seatable.io/dtable-server/dtables/${id}?lang=${lang}`, {
@@ -250,8 +251,8 @@ export class Base {
     tableByName: IHashTableTable = {}
     tables: SeatableTable[] = []
 
-    constructor(data) {
-        data.tables.forEach(table => {
+    constructor(data: any) {
+        data.tables.forEach((table: any) => {
             table = processTable(table)
             this.tableById[table._id] = table
             this.tableByName[table.name] = table
