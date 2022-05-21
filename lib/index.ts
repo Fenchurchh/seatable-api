@@ -1,4 +1,7 @@
+import fetch from "node-fetch"
+
 const API_TOKEN = process.env.API_TOKEN
+
 
 interface ISeatable {
     token: string
