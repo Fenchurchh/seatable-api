@@ -1,8 +1,9 @@
 {
-  "name": "@blandland/seatable-api",
+  "name": "@fenchurchh/seatable-api",
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
+  "repository": "git://github.com:blandland/seatable-api.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
