@@ -200,8 +200,8 @@ export class Seatable {
     }
 
 
-    async  getAuth() {
-        const data = await fetch("https://cloud.seatable.io/api/v2.1/dtable/app-access-token/", {
+    async  getAuth(): Promise<IAuth> {
+        return await fetch("https://cloud.seatable.io/api/v2.1/dtable/app-access-token/", {
             method: "GET",
             headers: {
                 "Accept": "application/json; charset=utf-8; indent=4",
@@ -210,7 +210,9 @@ export class Seatable {
             redirect: "follow"
         })
             .then(res => res.json())
-        return data
+            .then((data: IAuth) => {
+                return data
+            })
     }
 
     async  getTable(tableName: any, baseId = "") {
